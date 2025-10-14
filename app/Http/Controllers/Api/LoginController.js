@@ -27,6 +27,8 @@ export default async function LoginController(request, response) {
             }
         );
 
+        console.log(userModel);
+
         if (!userModel) {
             return response.status(401).json({ error: 'Credenciais inválidas' });
         }
