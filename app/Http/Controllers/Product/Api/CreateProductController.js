@@ -30,7 +30,7 @@ export default async function CreateProductController(request, response) {
 
         const row = await ProductModel.create({
             name: name,
-            price: Number(price) * 1E3
+            price_times_thousand: Number(price) * 1E3
         });
 
         return response.status(HTTP_STATUS.SUCCESS_CREATED).json(row);
@@ -41,7 +41,7 @@ export default async function CreateProductController(request, response) {
                 .status(HTTP_STATUS.BAD_REQUEST)
                 .json({ error: "E-mail já está cadastrado." });
         }
-
+        console.log(error);
         return response.status(HTTP_STATUS.SERVER_ERROR).json({ error: 'Error de servidor.' });
 
     }

@@ -1,9 +1,10 @@
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import type { ListApi, ProductModel } from "../../app.types";
 import productListApi from "../../api/productListApi";
 import ProductCreateForm from "./ProductCreateForm";
 
 export default function ProductsTwoCols() {
+
     const [data, setData] = useState<ListApi<ProductModel> | "error">();
 
     useEffect(() => {
@@ -63,8 +64,8 @@ export default function ProductsTwoCols() {
                                     <div className="card-footer bg-white border-0 pt-0">
                                         <div className="d-flex justify-content-between align-items-center">
                                             <span className="badge rounded-pill text-bg-primary">#{p.id}</span>
-                                            <button type="button" className="btn btn-sm btn-outline-primary">
-                                                Ver detalhes
+                                            <button type="button" className="btn btn-sm btn-outline-danger">
+                                                Excluir
                                             </button>
                                         </div>
                                     </div>
