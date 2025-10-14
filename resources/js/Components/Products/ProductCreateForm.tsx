@@ -1,5 +1,6 @@
-import { useState, FormEvent } from "react";
+import { useState } from "react";
 import { ProductCreateFormProps } from "./Products.types";
+import productCreateApi from "../../api/productCreateApi";
 
 export default function ProductCreateForm({ onCreate }: ProductCreateFormProps) {
 
@@ -15,9 +16,32 @@ export default function ProductCreateForm({ onCreate }: ProductCreateFormProps) 
         setName(event.target.value);
     }
 
-    const onCreateHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    const onCreateHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(name, parsePriceToThousand(price));
+        setErrorMsg(null);
+        
+        const priceThousand = parsePriceToThousand(price);
+        
+        if (!name.trim()) {
+            setErrorMsg("Nome é obrigatório");
+            return;
+        }
+        
+        if (priceThousand === null || priceThousand <= 0) {
+            setErrorMsg("Preço deve ser um valor válido maior que zero");
+            return;
+        }
+        
+        const resp = await productCreateApi(name.trim(), priceThousand);
+        
+        if ("error" in resp) {
+            setErrorMsg("Erro ao criar produto");
+            return;
+        }
+        
+        setName("");
+        setPrice("");
+        onCreate?.(resp);
     };
 
     // Converte string "12,34" / "12.34" para price_times_thousand (int)

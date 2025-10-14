@@ -1,3 +1,5 @@
+import { ProductModel } from "../../app.types";
+
 export type ProductCreateFormProps = {
-    onCreate?: (name: string, price: string) => void;
+    onCreate?: (product: ProductModel) => void;
 }

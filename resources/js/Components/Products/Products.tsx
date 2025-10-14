@@ -1,19 +1,38 @@
 import { useEffect, useState } from "react";
 import type { ListApi, ProductModel } from "../../app.types";
 import productListApi from "../../api/productListApi";
+import productDeleteApi from "../../api/productDeleteApi";
 import ProductCreateForm from "./ProductCreateForm";
 
 export default function ProductsTwoCols() {
 
     const [data, setData] = useState<ListApi<ProductModel> | "error">();
 
+    const loadProducts = async () => {
+        const resp = await productListApi();
+        if ("error" in resp) return setData("error");
+        setData(resp);
+    };
+
     useEffect(() => {
-        (async () => {
-            const resp = await productListApi();
-            if ("error" in resp) return setData("error");
-            setData(resp);
-        })();
+        loadProducts();
     }, []);
+
+    const handleDelete = async (id: number) => {
+        const resp = await productDeleteApi(id);
+        if ("error" in resp) return;
+        loadProducts();
+    };
+
+    const handleCreate = (newProduct: ProductModel) => {
+        if (data && data !== "error") {
+            setData({
+                ...data,
+                rows: [...data.rows, newProduct],
+                count: data.count + 1
+            });
+        }
+    };
 
     const formatPrice = (ptt: number) =>
         (ptt / 1000).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -37,7 +56,7 @@ export default function ProductsTwoCols() {
 
     return (
         <div className="row g-4">
-            <ProductCreateForm />
+            <ProductCreateForm onCreate={handleCreate} />
 
             <div className="col-12 col-lg-8">
                 {data.rows.length === 0 ? (
@@ -64,7 +83,11 @@ export default function ProductsTwoCols() {
                                     <div className="card-footer bg-white border-0 pt-0">
                                         <div className="d-flex justify-content-between align-items-center">
                                             <span className="badge rounded-pill text-bg-primary">#{p.id}</span>
-                                            <button type="button" className="btn btn-sm btn-outline-danger">
+                                            <button 
+                                                type="button" 
+                                                className="btn btn-sm btn-outline-danger"
+                                                onClick={() => handleDelete(p.id)}
+                                            >
                                                 Excluir
                                             </button>
                                         </div>
